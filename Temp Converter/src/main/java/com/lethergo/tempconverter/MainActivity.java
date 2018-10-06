@@ -15,13 +15,14 @@ public class MainActivity extends AppCompatActivity {
 
     final protected String error_celsius = "Celsius can't be less than -273.15°C";
     final protected String error_fahrenheit = "Fahrenheit can't be less than -459,67°F";
-    final protected String error_kelvin = "Kelvin can't be less than 0°K";
+    final protected String error_kelvin = "Kelvin can't be less than 0K";
     final protected String error_rankine = "Rankine can't be less than 0°R";
     final protected String error_input = "Input can't be null!";
     final protected String celsius = "Celsius";
     final protected String fahrenheit = "Fahrenheit";
     final protected String kelvin = "Kelvin";
     final protected String rankine = "Rankine";
+    final protected String title = "Simple Temperature Converter";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar Title = findViewById(R.id.toolbar);
-        Title.setTitle("Simple Temperature Converter");
+        Title.setTitle(title);
         setSupportActionBar(Title);
 
         final Button btnConvert = findViewById(R.id.btnConvert);
@@ -55,7 +56,12 @@ public class MainActivity extends AppCompatActivity {
                     String to = SpinnerTo.getSelectedItem().toString();
                     try {
                         double result = converter(input,from,to);
-                        String output = result + "°" + to.charAt(0);
+                        String output;
+                        if(to.equals(kelvin)) {
+                            output = Double.toString (result) + to.charAt(0);
+                        } else {
+                            output = result + "°" + to.charAt(0);
+                        }
                         output_txt.setText(output);
                     }catch (IllegalArgumentException e) {
                         output_txt.setText(e.getLocalizedMessage());
