@@ -9,7 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
     final protected String kelvin = "Kelvin";
     final protected String rankine = "Rankine";
     final protected String title = "Simple Temperature Converter";
+
+    final protected int decimalPlaces = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +93,16 @@ public class MainActivity extends AppCompatActivity {
             if(input >=-273.15) {
                 switch (to){
                     case celsius:
-                        result = input;
+                        result = rounder(input, decimalPlaces);
                         break;
                     case fahrenheit:
-                        result = input * 1.8 + 32;
+                        result = rounder(input * 1.8 + 32, decimalPlaces);
                         break;
                     case kelvin:
-                        result = input + 273.15;
+                        result = rounder(input + 273.15, decimalPlaces);
                         break;
                     case rankine:
-                        result = (input + 273.15) * 1.8;
+                        result = rounder((input + 273.15) * 1.8, decimalPlaces);
                         break;
                 }
             } else {
@@ -110,16 +113,16 @@ public class MainActivity extends AppCompatActivity {
             if(input >=-459.67) {
                 switch (to){
                     case celsius:
-                        result = (input - 32) * 5 / 9;
+                        result = rounder((input - 32) * 5 / 9, decimalPlaces);
                         break;
                     case fahrenheit:
-                        result = input;
+                        result = rounder(input, decimalPlaces);
                         break;
                     case kelvin:
-                        result = (input - 32) * 5 / 9 + 273.15;
+                        result = rounder((input - 32) * 5 / 9 + 273.15, decimalPlaces);
                         break;
                     case rankine:
-                        result = input + 459.67;
+                        result = rounder(input + 459.67, decimalPlaces);
                         break;
                 }
             } else {
@@ -130,16 +133,16 @@ public class MainActivity extends AppCompatActivity {
             if(input >=0) {
                 switch (to){
                     case celsius:
-                        result = input - 273.15;
+                        result = rounder(input - 273.15, decimalPlaces);
                         break;
                     case fahrenheit:
-                        result = (input - 273.15) * 9 / 5 + 32;
+                        result = rounder((input - 273.15) * 9 / 5 + 32, decimalPlaces);
                         break;
                     case kelvin:
-                        result = input;
+                        result = rounder(input, decimalPlaces);
                         break;
                     case rankine:
-                        result = input * 9 / 5;
+                        result = rounder(input * 9 / 5, decimalPlaces);
                         break;
                 }
             } else {
@@ -150,16 +153,16 @@ public class MainActivity extends AppCompatActivity {
             if(input >=0) {
                 switch (to){
                     case celsius:
-                        result = (input - 491.67) * 5 / 9;
+                        result = rounder((input - 491.67) * 5 / 9, decimalPlaces);
                         break;
                     case fahrenheit:
-                        result = input - 459.67;
+                        result = rounder(input - 459.67, decimalPlaces);
                         break;
                     case kelvin:
-                        result = input * 5 / 9;
+                        result = rounder(input * 5 / 9, decimalPlaces);
                         break;
                     case rankine:
-                        result = input;
+                        result = rounder(input, decimalPlaces);
                         break;
                 }
             } else {
@@ -168,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return result;
+    }
+
+    protected double rounder(double number, int decPoints) {
+        return BigDecimal.valueOf(number).setScale(decPoints, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
 }
