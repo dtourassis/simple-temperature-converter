@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Temp Converter</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="temp_array">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+        <item>Kelvin</item>
+        <item>Rankine</item>
+    </string-array>
+</resources>
