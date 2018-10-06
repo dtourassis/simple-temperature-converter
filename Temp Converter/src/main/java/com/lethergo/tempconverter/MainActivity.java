@@ -1,5 +1,8 @@
 package com.lethergo.tempconverter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 
@@ -25,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
     final protected String rankine = "Rankine";
     final protected String title = "Simple Temperature Converter";
 
+    // Settings
     final protected int decimalPlaces = 2;
+    final protected String defaultFromTemp = celsius;
+    final protected String defaultToTemp = fahrenheit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +52,13 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<CharSequence> adapterFrom = ArrayAdapter.createFromResource(this, R.array.temp_array, android.R.layout.simple_spinner_item);
         adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         SpinnerFrom.setAdapter(adapterFrom);
+        SpinnerFrom.setSelection(0);
 
         final Spinner SpinnerTo = findViewById(R.id.spinnerTo);
         ArrayAdapter<CharSequence> adapterTo = ArrayAdapter.createFromResource(this, R.array.temp_array, android.R.layout.simple_spinner_item);
         adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         SpinnerTo.setAdapter(adapterFrom);
+        SpinnerTo.setSelection(1);
 
         btnConvert.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -83,6 +92,19 @@ public class MainActivity extends AppCompatActivity {
                 SpinnerFrom.setSelection(sTo);
             }
         });
+
+        output_txt.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("converted temperature", output_txt.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, "Copied to clipboard!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     protected double converter(double input, String from, String to) throws IllegalArgumentException {
