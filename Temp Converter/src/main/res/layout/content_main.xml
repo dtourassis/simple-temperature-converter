@@ -90,5 +90,15 @@
         android:gravity="center_horizontal"
         android:focusable="false"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/output"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="-8dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        app:srcCompat="@android:drawable/ic_menu_preferences" />
 
 </RelativeLayout>

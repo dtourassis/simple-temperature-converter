@@ -3,6 +3,7 @@ package com.lethergo.tempconverter;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,29 +19,21 @@ import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity {
 
-    final protected String error_celsius = "Celsius can't be less than -273.15°C";
-    final protected String error_fahrenheit = "Fahrenheit can't be less than -459,67°F";
-    final protected String error_kelvin = "Kelvin can't be less than 0K";
-    final protected String error_rankine = "Rankine can't be less than 0°R";
-    final protected String error_input = "Input can't be null!";
-    final protected String celsius = "Celsius";
-    final protected String fahrenheit = "Fahrenheit";
-    final protected String kelvin = "Kelvin";
-    final protected String rankine = "Rankine";
-    final protected String title = "Simple Temperature Converter";
-
     // Settings
-    final protected int decimalPlaces = 2;
-    final protected String defaultFromTemp = celsius;
-    final protected String defaultToTemp = fahrenheit;
+    final int decimalPlaces = 2;
+    final int defaultFromTemp = 0;
+    final int defaultToTemp = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        final String error_input = getString(R.string.error_input);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Toolbar Title = findViewById(R.id.toolbar);
-        Title.setTitle(title);
+        Title.setTitle(getString(R.string.app_name));
         setSupportActionBar(Title);
 
         final Button btnConvert = findViewById(R.id.btnConvert);
@@ -67,19 +60,22 @@ public class MainActivity extends AppCompatActivity {
                     String from = SpinnerFrom.getSelectedItem().toString();
                     String to = SpinnerTo.getSelectedItem().toString();
                     try {
-                        double result = converter(input,from,to);
+                        double result = converter(input,from,to, decimalPlaces);
                         String output;
-                        if(to.equals(kelvin)) {
+                        if(to.equals(getString(R.string.kelvin))) {
                             output = Double.toString (result) + to.charAt(0);
                         } else {
                             output = result + "°" + to.charAt(0);
                         }
                         output_txt.setText(output);
                     }catch (IllegalArgumentException e) {
-                        output_txt.setText(e.getLocalizedMessage());
+                        Toast.makeText(MainActivity.this, e.getLocalizedMessage(),
+                                Toast.LENGTH_SHORT).show();
+                        output_txt.setText(getString(R.string.error));
                     }
                 } else {
-                    output_txt.setText(error_input);
+                    Toast.makeText(MainActivity.this, getString(R.string.error_input),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -96,105 +92,109 @@ public class MainActivity extends AppCompatActivity {
         output_txt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("converted temperature", output_txt.getText());
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(MainActivity.this, "Copied to clipboard!",
-                        Toast.LENGTH_SHORT).show();
+                if(!output_txt.getText().toString().isEmpty()) {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("temperature", output_txt.getText());
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(MainActivity.this, "Copied to clipboard!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Nothing to copy!",
+                            Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
 
     }
 
-    protected double converter(double input, String from, String to) throws IllegalArgumentException {
+    // Handles the conversions
+    protected double converter(double input, String from, String to, int decimalPlaces) throws IllegalArgumentException {
 
         double result = 0;
 
-        if(from.equals(celsius)) {
+        if(from.equals(getString(R.string.celsius))) {
             if(input >=-273.15) {
-                switch (to){
-                    case celsius:
-                        result = rounder(input, decimalPlaces);
-                        break;
-                    case fahrenheit:
-                        result = rounder(input * 1.8 + 32, decimalPlaces);
-                        break;
-                    case kelvin:
-                        result = rounder(input + 273.15, decimalPlaces);
-                        break;
-                    case rankine:
-                        result = rounder((input + 273.15) * 1.8, decimalPlaces);
-                        break;
+                if (to.equals(getString(R.string.celsius))) {
+                    result = rounder(input, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.fahrenheit))) {
+                    result = rounder(input * 1.8 + 32, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.kelvin))) {
+                    result = rounder(input + 273.15, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.rankine))) {
+                    result = rounder((input + 273.15) * 1.8, decimalPlaces);
+
                 }
             } else {
-                throw new IllegalArgumentException(error_celsius);
+                throw new IllegalArgumentException(getString(R.string.error_celsius));
             }
         }
-        else if(from.equals(fahrenheit)) {
+        else if(from.equals(getString(R.string.fahrenheit))) {
             if(input >=-459.67) {
-                switch (to){
-                    case celsius:
-                        result = rounder((input - 32) * 5 / 9, decimalPlaces);
-                        break;
-                    case fahrenheit:
-                        result = rounder(input, decimalPlaces);
-                        break;
-                    case kelvin:
-                        result = rounder((input - 32) * 5 / 9 + 273.15, decimalPlaces);
-                        break;
-                    case rankine:
-                        result = rounder(input + 459.67, decimalPlaces);
-                        break;
+                if (to.equals(getString(R.string.celsius))) {
+                    result = rounder((input - 32) * 5 / 9, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.fahrenheit))) {
+                    result = rounder(input, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.kelvin))) {
+                    result = rounder((input - 32) * 5 / 9 + 273.15, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.rankine))) {
+                    result = rounder(input + 459.67, decimalPlaces);
+
                 }
             } else {
-                throw new IllegalArgumentException(error_fahrenheit);
+                throw new IllegalArgumentException(getString(R.string.error_fahrenheit));
             }
         }
-        else if(from.equals(kelvin)) {
+        else if((from.equals(getString(R.string.kelvin)))) {
             if(input >=0) {
-                switch (to){
-                    case celsius:
-                        result = rounder(input - 273.15, decimalPlaces);
-                        break;
-                    case fahrenheit:
-                        result = rounder((input - 273.15) * 9 / 5 + 32, decimalPlaces);
-                        break;
-                    case kelvin:
-                        result = rounder(input, decimalPlaces);
-                        break;
-                    case rankine:
-                        result = rounder(input * 9 / 5, decimalPlaces);
-                        break;
+                if (to.equals(getString(R.string.celsius))) {
+                    result = rounder(input - 273.15, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.fahrenheit))) {
+                    result = rounder((input - 273.15) * 9 / 5 + 32, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.kelvin))) {
+                    result = rounder(input, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.rankine))) {
+                    result = rounder(input * 9 / 5, decimalPlaces);
+
                 }
             } else {
-                throw new IllegalArgumentException(error_kelvin);
+                throw new IllegalArgumentException(getString(R.string.error_kelvin));
             }
         }
-        else if(from.equals(rankine)) {
+        else if((from.equals(getString(R.string.rankine)))) {
             if(input >=0) {
-                switch (to){
-                    case celsius:
-                        result = rounder((input - 491.67) * 5 / 9, decimalPlaces);
-                        break;
-                    case fahrenheit:
-                        result = rounder(input - 459.67, decimalPlaces);
-                        break;
-                    case kelvin:
-                        result = rounder(input * 5 / 9, decimalPlaces);
-                        break;
-                    case rankine:
-                        result = rounder(input, decimalPlaces);
-                        break;
+                if (to.equals(getString(R.string.celsius))) {
+                    result = rounder((input - 491.67) * 5 / 9, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.fahrenheit))) {
+                    result = rounder(input - 459.67, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.kelvin))) {
+                    result = rounder(input * 5 / 9, decimalPlaces);
+
+                } else if (to.equals(getString(R.string.rankine))) {
+                    result = rounder(input, decimalPlaces);
+
                 }
             } else {
-                throw new IllegalArgumentException(error_rankine);
+                throw new IllegalArgumentException(getString(R.string.error_rankine));
             }
         }
 
         return result;
     }
 
+    // Handles the rounding
     protected double rounder(double number, int decPoints) {
         return BigDecimal.valueOf(number).setScale(decPoints, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
