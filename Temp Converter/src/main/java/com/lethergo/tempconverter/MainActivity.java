@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -27,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        final String error_input = getString(R.string.error_input);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -45,14 +45,15 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<CharSequence> adapterFrom = ArrayAdapter.createFromResource(this, R.array.temp_array, android.R.layout.simple_spinner_item);
         adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         SpinnerFrom.setAdapter(adapterFrom);
-        SpinnerFrom.setSelection(0);
+        SpinnerFrom.setSelection(defaultFromTemp);
 
         final Spinner SpinnerTo = findViewById(R.id.spinnerTo);
         ArrayAdapter<CharSequence> adapterTo = ArrayAdapter.createFromResource(this, R.array.temp_array, android.R.layout.simple_spinner_item);
         adapterTo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         SpinnerTo.setAdapter(adapterFrom);
-        SpinnerTo.setSelection(1);
+        SpinnerTo.setSelection(defaultToTemp);
 
+        // Makes the conversion
         btnConvert.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (input_txt.getText().length() > 0) {
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Switches the two selected temperature units
         reverseTemp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int sFrom = SpinnerFrom.getSelectedItemPosition();
@@ -89,6 +91,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Empties the output text when it detects a change on the input
+        input_txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                output_txt.setText(null);
+            }
+        });
+
+        // Copies the converted temperature when the output field is clicked
         output_txt.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
